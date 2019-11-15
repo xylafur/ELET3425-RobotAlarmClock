@@ -141,8 +141,8 @@ void ADC0_InitSWTriggerCh67(void){
   // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
   // 7    ADC14EOS    End of sequence         0b = Not end of sequence
   // 6-5  reserved                           00b (reserved)
-  // 4-0  ADC14INCHx  Input channel        0110b = A6, P4.7
-  ADC14->MCTL[1] = 0x00000087;     // 6b) 0 to 3.3V, channel 7
+  // 4-0  ADC14INCHx  Input channel        0110b = A62
+  ADC14->MCTL[1] = 0x00000007;     // 6b) 0 to 3.3V, channel 7
   // 15   ADC14WINCTH Window comp threshold   0b = not used
   // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
   // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
@@ -151,11 +151,29 @@ void ADC0_InitSWTriggerCh67(void){
   // 7    ADC14EOS    End of sequence         1b = End of sequence
   // 6-5  reserved                           00b (reserved)
   // 4-0  ADC14INCHx  Input channel        0111b = A7, P4.6
+  ADC14->MCTL[2] = 0x00000008;     // 6b) 0 to 3.3V, channel 7
+  // 15   ADC14WINCTH Window comp threshold   0b = not used
+  // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
+  // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
+  // 12   reserved                            0b (reserved)
+  // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
+  // 7    ADC14EOS    End of sequence         1b = End of sequence
+  // 6-5  reserved                           00b (reserved)
+  // 4-0  ADC14INCHx  Input channel        0111b = A8, P4.5
+  ADC14->MCTL[3] = 0x00000089;     // 6b) 0 to 3.3V, channel 7
+  // 15   ADC14WINCTH Window comp threshold   0b = not used
+  // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
+  // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
+  // 12   reserved                            0b (reserved)
+  // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
+  // 7    ADC14EOS    End of sequence         1b = End of sequence
+  // 6-5  reserved                           00b (reserved)
+  // 4-0  ADC14INCHx  Input channel        0111b = A9, P5.5
 
   ADC14->IER0 = 0;                 // 7) no interrupts
   ADC14->IER1 = 0;                 //    no interrupts
-  P4->SEL1 |= 0xC0;                // 8) analog mode on P4.7/A6 and P4.6/A7
-  P4->SEL0 |= 0xC0;
+  P4->SEL1 |= 0xFF;                // 8) analog mode on P4.7/A6 and P4.6/A7
+  P4->SEL0 |= 0xFF;
   ADC14->CTL0 |= 0x00000002;       // 9) enable
 }
 
@@ -165,13 +183,17 @@ void ADC0_InitSWTriggerCh67(void){
 // ADC14IVx is 0x0E when ADC14MEM1 interrupt flag; Interrupt Flag: ADC14IFG1
 // ADC14MEM0 14-bit conversion in bits 13-0 (31-16 undefined, 15-14 zero)
 // ADC14MEM1 14-bit conversion in bits 13-0 (31-16 undefined, 15-14 zero)
-void ADC_In67(uint32_t *ch6, uint32_t *ch7){
+void ADC_In67(uint32_t *ch6, uint32_t *ch7, uint32_t *ch8){
+  uint32_t * tmp;
   while(ADC14->CTL0&0x00010000){}; // 1) wait for BUSY to be zero
   ADC14->CTL0 |= 0x00000001;       // 2) start single conversion
                                    // 3) wait for ADC14IFG1
-  while((ADC14->IFGR0&0x02) == 0){};
+  //while((ADC14->IFGR0&0x01) == 0){};
+  while((ADC14->IFGR0&0x08) == 0){};
   *ch6 = ADC14->MEM[0];            // 4) P4.7/A6 result 0 to 16383
   *ch7 = ADC14->MEM[1];            //    P4.6/A7 result 0 to 16383
+  *ch8 = ADC14->MEM[2];            //    P4.5/A8 result 0 to 16383
+  *tmp = ADC14->MEM[3];
 }
 //**********software below is part of Lab 15**************
 // P4.1 = A12

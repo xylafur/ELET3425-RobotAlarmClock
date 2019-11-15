@@ -141,7 +141,7 @@ uint32_t ADC_In6(void);
  * @note  Assumes ADC0_InitSWTriggerCh67() has been called.
  * @brief  Trigger ADC measurement on channels 6+7 and wait for result.
  */
-void ADC_In67(uint32_t *ch6, uint32_t *ch7);
+void ADC_In67(uint32_t *ch6, uint32_t *ch7, uint32_t *ch8);
 
 /**
  * Trigger a single ADC measurement on P4.1/A12,

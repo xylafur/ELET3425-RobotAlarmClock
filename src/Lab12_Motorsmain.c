@@ -116,23 +116,24 @@ void configure_ADC()
 {
     ADC14->CTL0 &= ~0x00000002;        // 2) ADC14ENC = 0 to allow programming
     while(ADC14->CTL0&0x00010000){};   // 3) wait for BUSY to be zero
-    ADC14->CTL0 = 0x04203310;          // 4) single, SMCLK, on, disabled, /1, 32 SHM
+    ADC14->CTL0 = 0x4223390;          // 4) single, SMCLK, on, disabled, /1, 32 SHM
     // 31-30 ADC14PDIV  predivider,            00b = Predivide by 1
     // 29-27 ADC14SHSx  SHM source            000b = ADC14SC bit
     // 26    ADC14SHP   SHM pulse-mode          1b = SAMPCON the sampling timer
     // 25    ADC14ISSH  invert sample-and-hold  0b =  not inverted
     // 24-22 ADC14DIVx  clock divider         000b = /1
     // 21-19 ADC14SSELx clock source select   100b = SMCLK
-    // 18-17 ADC14CONSEQx mode select          00b = Single-channel, single-conversion
+    // 18-17 ADC14CONSEQx mode select          01b = Sequence of channels
     // 16    ADC14BUSY  ADC14 busy              0b (read only)
     // 15-12 ADC14SHT1x sample-and-hold time 0011b = 32 clocks
     // 11-8  ADC14SHT0x sample-and-hold time 0011b = 32 clocks
-    // 7     ADC14MSC   multiple sample         0b = not multiple
+    // 7     ADC14MSC   multiple sample         1b = not multiple
     // 6-5   reserved                          00b (reserved)
     // 4     ADC14ON    ADC14 on                1b = powered up
     // 3-2   reserved                          00b (reserved)
     // 1     ADC14ENC   enable conversion       0b = ADC14 disabled
     // 0     ADC14SC    ADC14 start             0b = No start (yet)
+
     ADC14->CTL1 = 0x00000030;          // 5) ADC14MEM0, 14-bit, ref on, regular power
     // 20-16 STARTADDx  start addr          00000b = ADC14MEM0
     // 15-6  reserved                  0000000000b (reserved)
@@ -140,7 +141,18 @@ void configure_ADC()
     // 3     ADC14DF    data read-back format   0b = Binary unsigned
     // 2     REFBURST   reference buffer burst  0b = reference on continuously
     // 1-0   ADC14PWRMD ADC power modes        00b = Regular power mode
-    ADC14->MCTL[0] = 0x00000080;         // 6) 0 to 3.3V, channel 6
+
+    ADC14->MCTL[0] = 0x00000000;         // 6) 0 to 3.3V, channel 0
+    // 15   ADC14WINCTH Window comp threshold   0b = not used
+    // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
+    // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
+    // 12   reserved                            0b (reserved)
+    // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
+    // 7    ADC14EOS    End of sequence         0b = End of sequence
+    // 6-5  reserved                           00b (reserved)
+    // 4-0  ADC14INCHx  Input channel        0000b = A0, P5.5
+
+    ADC14->MCTL[1] = 0x00000081;         // 6) 0 to 3.3V, channel 1
     // 15   ADC14WINCTH Window comp threshold   0b = not used
     // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
     // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
@@ -148,7 +160,9 @@ void configure_ADC()
     // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
     // 7    ADC14EOS    End of sequence         1b = End of sequence
     // 6-5  reserved                           00b (reserved)
-    // 4-0  ADC14INCHx  Input channel        0000b = A0, P5.5
+    // 4-0  ADC14INCHx  Input channel        0001b = A1, P5.4
+
+
 
     ADC14->IER0 = 0; // 7) no interrupts
     ADC14->IER1 = 0; // no interrupts
@@ -156,21 +170,19 @@ void configure_ADC()
     P5->SEL1 |= 0x38;
 
     ADC14->CTL0 |= 0x00000002;         // 9) enable
-
 }
 
-void start_ADC()
-{
-    // Set the start conversion bit
-    ADC14->CTL0 |= 0x1;
-}
 
-uint32_t read_ADC()
+
+void read_ADC(uint32_t buf [2])
 {
+    //uint32_t buf [2];
     while(ADC14->CTL0&0x00010000){};    // 1) wait for BUSY to be zero
     ADC14->CTL0 |= 0x00000001;          // 2) start single conversion
-    while((ADC14->IFGR0&0x01) == 0){};  // 3) wait for ADC14IFG0
-    return ADC14->MEM[0];
+    while((ADC14->IFGR0&0x02) == 0){};  // 3) wait for ADC14IFG0
+    buf[0] = ADC14->MEM[0];
+    buf[1] = ADC14->MEM[1];
+    //return buf;
 }
 
 #define RED 0x1
@@ -179,30 +191,32 @@ uint32_t read_ADC()
 
 void main(){
     uint32_t n;
+    uint32_t m;
+    uint32_t o;
+
+    uint32_t *a;
+    uint32_t *b;
+    uint32_t *c;
 
     Clock_Init48MHz(); // makes it 48 MHz
-    SysTick_Init();
-    LaunchPad_Init();   // buttons and LEDs
+    //SysTick_Init();
+    //LaunchPad_Init();   // buttons and LEDs
     //EUSCIA0_Init();     // initialize UART
 
-    Motor_Init();
-    configure_ADC();
-    //start_ADC();
+    //Motor_Init();
+    //P4->DIR = 0x0;
+
+    //configure_ADC();
+    ADC0_InitSWTriggerCh67();
 
     while (1){
-        //n = read_ADC();
-        n = read_ADC();
-        if(n < 128){
-            LaunchPad_Output(GREEN);
-        } else if (n < 1024){
-            LaunchPad_Output(RED);
-        }else{
-            LaunchPad_Output(BLUE);
-        }
-
+        //read_ADC(buf);
+        ADC_In67(&m, &n, &o);
+        //m=(*a)&0x3fff;
+        //n=(*b)&0x3fff;
     }
 
-    Drive_Motors(50, 1, 50, 1);
+    //Drive_Motors(50, 1, 50, 1);
 
     //EUSCIA0_OutString("Hello World!");
     //n=EUSCIA0_InUDec();
