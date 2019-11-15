@@ -18,6 +18,7 @@ C_SRCS += \
 /home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/MotorSimple.c \
 ../PWM.c \
 /home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/SysTick.c \
+../TimerA2.c \
 ../UART0.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
@@ -34,6 +35,7 @@ C_DEPS += \
 ./MotorSimple.d \
 ./PWM.d \
 ./SysTick.d \
+./TimerA2.d \
 ./UART0.d \
 ./startup_msp432p401r_ccs.d \
 ./system_msp432p401r.d 
@@ -50,6 +52,7 @@ OBJS += \
 ./MotorSimple.obj \
 ./PWM.obj \
 ./SysTick.obj \
+./TimerA2.obj \
 ./UART0.obj \
 ./startup_msp432p401r_ccs.obj \
 ./system_msp432p401r.obj 
@@ -66,6 +69,7 @@ OBJS__QUOTED += \
 "MotorSimple.obj" \
 "PWM.obj" \
 "SysTick.obj" \
+"TimerA2.obj" \
 "UART0.obj" \
 "startup_msp432p401r_ccs.obj" \
 "system_msp432p401r.obj" 
@@ -82,6 +86,7 @@ C_DEPS__QUOTED += \
 "MotorSimple.d" \
 "PWM.d" \
 "SysTick.d" \
+"TimerA2.d" \
 "UART0.d" \
 "startup_msp432p401r_ccs.d" \
 "system_msp432p401r.d" 
@@ -98,6 +103,7 @@ C_SRCS__QUOTED += \
 "/home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/MotorSimple.c" \
 "../PWM.c" \
 "/home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/SysTick.c" \
+"../TimerA2.c" \
 "../UART0.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 

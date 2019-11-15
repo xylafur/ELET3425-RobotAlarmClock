@@ -65,6 +65,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 
 #include "../inc/Motor.h"
 #include "../inc/ADC14.h"
+#include "../inc/TimerA2.h"
 
 // Driver test
 void Pause(void){
@@ -72,46 +73,14 @@ void Pause(void){
   while(LaunchPad_Input());     // wait for release
 }
 
-//void configure_ADC()
-//{
-//    // Set reference voltage to 2.5V
-//    REF_A->CTL0 |= 0x40;
-//    //Turn the reference module on
-//    REF_A->CTL0 |= 0x1;
-//
-//    // Set ADC14SC (start conversion) to 0, turn the ADC module on
-//    // This also sets the clock predivider to 0 (bits 31-30)
-//    // Also sets ths clock divider to 0 (bits 24-22)
-//    // This also sets the clock source to MCLK (bits 21-19(
-//    ADC14->CTL0 = 0x180030;
-//    // Sets all the channel's sources to external by setting them 0 (bits 27-23)
-//    ADC14->CTL1 &= ~(0xf800000);
-//
-//    // P5.5 = A0, P5.4 = A1, P5.3 = A2
-//    // Need to set the SEL pins for all of these to b11 to select the ADC functionality
-//    P5->SEL0 |= 0x38;
-//    P5->SEL1 |= 0x38;
-//
-//    // Make these bits input
-//    P5->DIR  |= ~(0x38);
-//
-//    // set the starting address to 0 for ADC
-//    ADC14->CTL1 &= ~(0x1f0000);
-//
-//    // Configure the memory addresses for each of our channels
-//    //
-//    // Select our 2.5 VREF that we set up as our VREF, channel 0
-//    ADC14->MCTL[0] = 0x100;
-//    // Select our 2.5 VREF that we set up as our VREF, channel 1
-//    ADC14->MCTL[1] = 0x101;
-//    // Select our 2.5 VREF that we set up as our VREF, channel 2, set it as end of sequence
-//    ADC14->MCTL[2] = 0x182;
-//
-//    // Enable the conversion for ADC
-//    ADC14->CTL0 |= 0x2;
-//
-//}
-//
+uint32_t sensor_right, sensor_left, sensor_forward;
+void timerA2_task(void)
+{
+
+    ADC_In67(&sensor_right, &sensor_left, &sensor_forward);
+
+}
+
 void configure_ADC()
 {
     ADC14->CTL0 &= ~0x00000002;        // 2) ADC14ENC = 0 to allow programming
@@ -172,52 +141,29 @@ void configure_ADC()
     ADC14->CTL0 |= 0x00000002;         // 9) enable
 }
 
-
-
-void read_ADC(uint32_t buf [2])
-{
-    //uint32_t buf [2];
-    while(ADC14->CTL0&0x00010000){};    // 1) wait for BUSY to be zero
-    ADC14->CTL0 |= 0x00000001;          // 2) start single conversion
-    while((ADC14->IFGR0&0x02) == 0){};  // 3) wait for ADC14IFG0
-    buf[0] = ADC14->MEM[0];
-    buf[1] = ADC14->MEM[1];
-    //return buf;
-}
-
 #define RED 0x1
 #define GREEN 0x2
 #define BLUE 0x4
 
 void main(){
-    uint32_t n;
-    uint32_t m;
-    uint32_t o;
-
-    uint32_t *a;
-    uint32_t *b;
-    uint32_t *c;
-
+    uint32_t a, b, c;
     Clock_Init48MHz(); // makes it 48 MHz
-    //SysTick_Init();
-    //LaunchPad_Init();   // buttons and LEDs
-    //EUSCIA0_Init();     // initialize UART
+    SysTick_Init();
+    LaunchPad_Init();   // buttons and LEDs
 
-    //Motor_Init();
-    //P4->DIR = 0x0;
+    Motor_Init();
 
-    //configure_ADC();
     ADC0_InitSWTriggerCh67();
 
+    // The period is in units of 2 us, 38ms = 19000 counts
+    TimerA2_Init(timerA2_task, 19000);
+
     while (1){
-        //read_ADC(buf);
-        ADC_In67(&m, &n, &o);
-        //m=(*a)&0x3fff;
-        //n=(*b)&0x3fff;
+        a = sensor_forward;
+        b = sensor_left;
+        c = sensor_right;
+
     }
 
     //Drive_Motors(50, 1, 50, 1);
-
-    //EUSCIA0_OutString("Hello World!");
-    //n=EUSCIA0_InUDec();
 }
