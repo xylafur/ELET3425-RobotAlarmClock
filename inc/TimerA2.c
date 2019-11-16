@@ -43,7 +43,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 */
 
 #include <stdint.h>
-#include "TimerUtil.h"
+#include "../inc/TimerUtil.h"
 #include "msp.h"
 
 

@@ -184,7 +184,7 @@ void ADC0_InitSWTriggerCh67(void){
 // ADC14MEM0 14-bit conversion in bits 13-0 (31-16 undefined, 15-14 zero)
 // ADC14MEM1 14-bit conversion in bits 13-0 (31-16 undefined, 15-14 zero)
 void ADC_In67(uint32_t *ch6, uint32_t *ch7, uint32_t *ch8){
-  uint32_t * tmp;
+  uint32_t tmp;
   while(ADC14->CTL0&0x00010000){}; // 1) wait for BUSY to be zero
   ADC14->CTL0 |= 0x00000001;       // 2) start single conversion
                                    // 3) wait for ADC14IFG1
@@ -193,7 +193,7 @@ void ADC_In67(uint32_t *ch6, uint32_t *ch7, uint32_t *ch8){
   *ch6 = ADC14->MEM[0];            // 4) P4.7/A6 result 0 to 16383
   *ch7 = ADC14->MEM[1];            //    P4.6/A7 result 0 to 16383
   *ch8 = ADC14->MEM[2];            //    P4.5/A8 result 0 to 16383
-  *tmp = ADC14->MEM[3];
+  tmp = ADC14->MEM[3];
 }
 //**********software below is part of Lab 15**************
 // P4.1 = A12
