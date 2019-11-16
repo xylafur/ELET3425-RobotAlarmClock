@@ -73,13 +73,159 @@ void Pause(void){
   while(LaunchPad_Input());     // wait for release
 }
 
-uint32_t sensor_right, sensor_left, sensor_forward;
+uint32_t right_distance, center_distance, left_distance;
+
+#define SENSOR_BUFFER_SIZE 3
+uint32_t sensor_right, sensor_left, sensor_center;
+uint32_t sensor_right_buff [SENSOR_BUFFER_SIZE];
+uint32_t sensor_left_buff [SENSOR_BUFFER_SIZE];
+uint32_t sensor_center_buff [SENSOR_BUFFER_SIZE];
+
+uint32_t average_array(uint32_t * arr, uint32_t size)
+{
+    uint32_t avg = 0;
+    int ii;
+    for(ii = 0; ii < size; ii++){
+        avg += arr[ii];
+    }
+    return (avg/size);
+}
+/*
+ *  Dr= Ar/(nr + Br) + Cr
+ *  Dc= Ac/(nc+ Bc) + Cr
+ *  Dl= Al/(nl + Bl) + C
+ */
+// Constants for right
+const uint32_t Ar = 1, Br = 1, Cr = 1;
+// Constants for center
+const uint32_t Ac = 1, Bc = 1, Cc = 1;
+// Constants for left
+const uint32_t Al = 1, Bl = 1, Cl = 1;
+
+void convert_sensor_to_distance(uint32_t* right_distance, uint32_t* center_distance,
+                                uint32_t* left_distance)
+{
+    //*right_distance = Ar / (sensor_right + Br) + Cr;
+    //*center_distance = Ac / (sensor_center + Bc) + Cc;
+    //*left_distance = Al / (sensor_left + Bl) + Cl;
+
+    // TODO: This is temporary
+    *right_distance  = sensor_right  >= 6000 ? 200 : 800;
+    *center_distance = sensor_center >= 6000 ? 200 : 800;
+    *left_distance   = sensor_left   >= 6000 ? 200 : 800;
+}
+
 void timerA2_task(void)
 {
-
-    ADC_In67(&sensor_right, &sensor_left, &sensor_forward);
+    int ii;
+    for(ii = 0; ii < 3; ii++){
+        ADC_In67(&(sensor_right_buff[ii]),
+                 &(sensor_left_buff[ii]),
+                 &(sensor_center_buff[ii]));
+    }
+    sensor_right = average_array(sensor_right_buff, SENSOR_BUFFER_SIZE);
+    sensor_left = average_array(sensor_left_buff, SENSOR_BUFFER_SIZE);
+    sensor_center = average_array(sensor_center_buff, SENSOR_BUFFER_SIZE);
+    convert_sensor_to_distance(&right_distance, &center_distance, &left_distance);
 
 }
+#undef SENSOR_BUFFER_SIZE
+
+
+
+enum transitions_e {
+    OBJECT_LEFT = 0,
+    OBJECT_CENTER_LEFT,
+    OBJECT_CENTER,
+    OBJECT_CENTER_RIGHT,
+    OBJECT_RIGHT,
+    OBJECT_NONE,
+
+    NUM_TRANSITIONS
+};
+
+// Object distance is from 50 to 800 mm
+#define OBJECT_THRESHOLD 200
+enum transitions_e distance_to_obj(uint32_t right_distance, uint32_t center_distance, uint32_t left_distance)
+{
+    if(center_distance <= OBJECT_THRESHOLD){
+        if(right_distance <= OBJECT_THRESHOLD){
+            if(left_distance <= OBJECT_THRESHOLD){
+                return OBJECT_CENTER;
+            }
+            return OBJECT_CENTER_RIGHT;
+        }
+
+        if(left_distance <= OBJECT_THRESHOLD){
+            return OBJECT_CENTER_LEFT;
+        }
+
+        return OBJECT_CENTER;
+    }
+
+    if(right_distance <= OBJECT_THRESHOLD){
+        return OBJECT_RIGHT;
+    }
+
+    if(left_distance <= OBJECT_THRESHOLD){
+        return OBJECT_LEFT;
+    }
+
+    return OBJECT_NONE;
+}
+
+enum states_e {
+    ROTATING_LEFT = 0,
+    VEERING_LEFT,
+    MOVING_FORWARD,
+    VEERING_RIGHT,
+    ROTATING_RIGHT,
+
+    NUM_STATES
+};
+
+#define RED 0x1
+#define GREEN 0x2
+#define BLUE 0x4
+
+#define PURPLE (RED|BLUE)
+#define YELLOW (RED|GREEN)
+#define CYAN   (BLUE|GREEN)
+#define WHITE  (RED|BLUE|GREEN)
+
+
+struct FSM_State_s {
+    enum states_e state;
+
+    uint16_t left_speed;    // As a percentage from 0-100
+    uint16_t left_dir;      // Boolean value, 1 forward, 0 backwards
+
+    uint16_t right_speed;   // As a percentage from 0-100
+    uint16_t right_dir;     // Boolean value, 1 forward, 0 backwards
+    uint32_t color;
+
+    uint32_t next_state_index [NUM_TRANSITIONS];
+} FSM_State_s ;
+
+#define MOTOR_MAX_SPEED 20
+#define MOTOR_MIN_SPEED 5
+
+struct FSM_State_s FSM_States [NUM_STATES] = {
+    {ROTATING_LEFT, MOTOR_MIN_SPEED, 0, MOTOR_MIN_SPEED, 1, PURPLE,
+        {ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, MOVING_FORWARD}},
+
+    {VEERING_LEFT, MOTOR_MIN_SPEED, 1, MOTOR_MAX_SPEED, 1, BLUE,
+        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
+
+    {MOVING_FORWARD, MOTOR_MAX_SPEED, 1, MOTOR_MAX_SPEED, 1, RED,
+        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
+
+    {VEERING_RIGHT, MOTOR_MAX_SPEED, 1, MOTOR_MIN_SPEED, 1, GREEN,
+        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
+
+    {ROTATING_RIGHT, MOTOR_MAX_SPEED, 1, MOTOR_MIN_SPEED, 0, YELLOW,
+        {ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, MOVING_FORWARD}}
+};
 
 void configure_ADC()
 {
@@ -141,29 +287,35 @@ void configure_ADC()
     ADC14->CTL0 |= 0x00000002;         // 9) enable
 }
 
-#define RED 0x1
-#define GREEN 0x2
-#define BLUE 0x4
-
 void main(){
     uint32_t a, b, c;
     Clock_Init48MHz(); // makes it 48 MHz
-    SysTick_Init();
+    //SysTick_Init();
     LaunchPad_Init();   // buttons and LEDs
 
-    Motor_Init();
+    //Motor_Init();
 
     ADC0_InitSWTriggerCh67();
 
     // The period is in units of 2 us, 38ms = 19000 counts
-    TimerA2_Init(timerA2_task, 19000);
+    //TimerA2_Init(timerA2_task, 19000);
+
+    // Start moving forward
+    struct FSM_State_s current_state = FSM_States[2], next_state;
+    uint32_t next_state_index;
 
     while (1){
-        a = sensor_forward;
-        b = sensor_left;
-        c = sensor_right;
+        //uint32_t transition = distance_to_obj(right_distance, center_distance, left_distance);
+        //next_state_index = current_state.next_state_index[transition];
 
+        //next_state = FSM_States[next_state_index];
+        //LaunchPad_Output(next_state.color);
+        //Drive_Motors(current_state.left_speed, current_state.left_dir,
+        //             current_state.right_speed, current_state.right_dir);
+        ADC_In67(&a, &b, &c);
+
+        //a = sensor_center;
+        //b = sensor_left;
+        //c = sensor_right;
     }
-
-    //Drive_Motors(50, 1, 50, 1);
 }
