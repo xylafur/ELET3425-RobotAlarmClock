@@ -1,0 +1,5 @@
+Max Sensor Reading = 15506
+Min Sesnor Reading = 3494
+
+Min Distance = 50  mm
+Max Distance = 800 mm

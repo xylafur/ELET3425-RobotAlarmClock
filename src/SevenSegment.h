@@ -19,5 +19,6 @@ void seven_segment_setup();
 
 void set_segment_value(enum segment_e segment, uint8_t val);
 void write_to_segment(enum segment_e segment, uint8_t val);
+void seven_segment_display(uint32_t val);
 
 #endif

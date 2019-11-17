@@ -70,6 +70,40 @@ void seven_segment_setup() {
   TimerA1_Init((*segment_update_task), 93);
 }
 
+uint32_t pow(uint32_t a, uint32_t b)
+{
+    uint32_t ii, x=a;
+    if(b <= 0){
+        return 1;
+    }
+    for(ii = 0; ii < (b-1); ii++){
+        x *= a;
+    }
+    return x;
+}
+
+void seven_segment_display(uint32_t val)
+{
+    uint8_t ii, tmp1, tmp2;
+    uint32_t pow_val;
+    if(val > 9999){
+        return;
+    }
+    for(ii = 0; ii < NUM_SEGMENTS; ii++){
+        // I have to do it this way because I made the array backwards, kind of annoying
+        // index 0 in t9999he array is actaully the left most display, so it is the greatest digit
+        tmp1 = NUM_SEGMENTS - ii - 1;
+        pow_val = pow(10, tmp1);
+        if(pow_val > val){
+            set_segment_value(ii, 0);
+        }else{
+            // Grab only the digit we want
+            tmp2 = (val / (pow(10, tmp1))) % 10;
+            set_segment_value(ii, tmp2);
+        }
+    }
+}
+
 void set_segment_value(enum segment_e segment, uint8_t val)
 {
     uint8_t segment_mask, led_mask;

@@ -68,6 +68,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include "../inc/Motor.h"
 #include "../inc/ADC14.h"
 #include "../inc/TimerA2.h"
+#include "../inc/Clock.h"
 
 
 extern struct FSM_State_s FSM_States [NUM_STATES];
@@ -137,9 +138,64 @@ void timerA2_task(void)
 }
 #undef SENSOR_BUFFER_SIZE
 
+#define BUTTON_PORT P4
+const uint8_t UP_BUTTON_PIN = 0, DOWN_BUTTON_PIN = 1, START_BUTTON_PIN = 2;
+
+void setup_buttons()
+{
+    uint8_t mask = ~((1<<UP_BUTTON_PIN) | (1<<DOWN_BUTTON_PIN) | (1<<START_BUTTON_PIN));
+    BUTTON_PORT->DIR &= mask;
+    BUTTON_PORT->SEL0 &= mask;
+    BUTTON_PORT->SEL1 &= mask;
+
+    BUTTON_PORT->REN |= ~mask;
+    BUTTON_PORT->OUT &= mask;
+}
+inline uint8_t up_button()
+{
+    // Do a double not to make the value either 0 or 1
+    return !!!((1<<UP_BUTTON_PIN) & BUTTON_PORT->IN);
+}
+inline uint8_t down_button()
+{
+    return !!!((1<<DOWN_BUTTON_PIN) & BUTTON_PORT->IN);
+}
+inline uint8_t start_button()
+{
+    return !!!((1<<START_BUTTON_PIN) & BUTTON_PORT->IN);
+}
+
+uint32_t get_timer_val()
+{
+    //return 10;
+    uint32_t timer_val = 0;
+    uint8_t val;
+    while(1){
+        seven_segment_display(timer_val);
+        if(up_button()){
+            timer_val++;
+        }else if(down_button()){
+            timer_val--;
+        }else if(start_button()){
+            break;
+        }
+    }
+    return timer_val;
+}
+
+void count_down(uint32_t initial)
+{
+    while(initial > 0){
+        seven_segment_display(initial--);
+        Clock_Delay1ms(1000);
+    }
+    seven_segment_display(0);
+}
+
 void main(){
     struct FSM_State_s current_state = FSM_States[2];
     uint32_t next_state_index, transition;
+    uint32_t countdown_val;
 
     Clock_Init48MHz(); // makes it 48 MHz
     SysTick_Init();
@@ -150,28 +206,32 @@ void main(){
 
     // Initialize our ADCs
     ADC0_InitSWTriggerCh67();
+    // This will set up the periodic task for the 7 segment
+    seven_segment_setup();
+    setup_buttons();
 
+    // This starts periodic polling for the sensors
     // The period is in units of 2 us, 38ms = 19000 counts
     TimerA2_Init(timerA2_task, 19000);
 
-    seven_segment_setup();
+    while(1){
+        countdown_val = get_timer_val();
+        count_down(countdown_val);
 
-    set_segment_value(0, 1);
-    set_segment_value(1, 2);
-    set_segment_value(2, 3);
-    set_segment_value(3, 4);
+        // Need to setup stop button edge triggered interrupt here
 
-    while (1){
-        // Figure out object position based on distances
-        transition = distance_to_obj(right_distance, center_distance, left_distance);
-        // Figure out the next state based on this states transition table
-        next_state_index = current_state.next_state_index[transition];
-        // Update the current state
-        current_state = FSM_States[next_state_index];
-        // Update LED output
-        LaunchPad_Output(current_state.color);
-        // Update motor speed and direction
-        //Drive_Motors(current_state.left_speed, current_state.left_dir,
-          //           current_state.right_speed, current_state.right_dir);
+        while (1){
+            // Figure out object position based on distances
+            transition = distance_to_obj(right_distance, center_distance, left_distance);
+            // Figure out the next state based on this states transition table
+            next_state_index = current_state.next_state_index[transition];
+            // Update the current state
+            current_state = FSM_States[next_state_index];
+            // Update LED output
+            LaunchPad_Output(current_state.color);
+            // Update motor speed and direction
+            //Drive_Motors(current_state.left_speed, current_state.left_dir,
+              //           current_state.right_speed, current_state.right_dir);
+        }
     }
 }
