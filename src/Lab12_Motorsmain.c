@@ -139,7 +139,7 @@ void timerA2_task(void)
 #undef SENSOR_BUFFER_SIZE
 
 #define BUTTON_PORT P4
-const uint8_t UP_BUTTON_PIN = 0, DOWN_BUTTON_PIN = 1, START_BUTTON_PIN = 2;
+const uint8_t UP_BUTTON_PIN = 3, DOWN_BUTTON_PIN = 1, START_BUTTON_PIN = 2;
 
 void setup_buttons()
 {
@@ -151,36 +151,60 @@ void setup_buttons()
     BUTTON_PORT->REN |= ~mask;
     BUTTON_PORT->OUT &= mask;
 }
-inline uint8_t up_button()
+inline uint8_t up_button(uint8_t in)
 {
     // Do a double not to make the value either 0 or 1
-    return !!!((1<<UP_BUTTON_PIN) & BUTTON_PORT->IN);
+    return !!((1<<UP_BUTTON_PIN) & in);
 }
-inline uint8_t down_button()
+inline uint8_t down_button(uint8_t in)
 {
-    return !!!((1<<DOWN_BUTTON_PIN) & BUTTON_PORT->IN);
+    return !!((1<<DOWN_BUTTON_PIN) & in);
 }
-inline uint8_t start_button()
+inline uint8_t start_button(uint8_t in)
 {
-    return !!!((1<<START_BUTTON_PIN) & BUTTON_PORT->IN);
+    return !!((1<<START_BUTTON_PIN) & in);
 }
 
 uint32_t get_timer_val()
 {
     //return 10;
     uint32_t timer_val = 0;
-    uint8_t val;
+    uint8_t in;
     while(1){
         seven_segment_display(timer_val);
-        if(up_button()){
-            timer_val++;
-        }else if(down_button()){
-            timer_val--;
-        }else if(start_button()){
+        in = BUTTON_PORT->IN;
+        if(start_button(in)){
             break;
+        }
+        if(up_button(in)){
+            timer_val++;
+            Clock_Delay1ms(100);
+        }else if(down_button(in)){
+            timer_val--;
+            Clock_Delay1ms(100);
         }
     }
     return timer_val;
+}
+
+#define ALARM_PORT P5
+const ALARM_ON_PIN = 4, ALARM_OFF_PIN = 5;
+
+void setup_alarm()
+{
+    uint8_t mask = ((1<<ALARM_ON_PIN) | (1<<ALARM_OFF_PIN));
+    ALARM_PORT->DIR  |= mask;
+    ALARM_PORT->SEL0 &= ~mask;
+    ALARM_PORT->SEL1 &= ~mask;
+}
+void turn_alarm_on()
+{
+    ALARM_PORT->OUT |= 1<<ALARM_ON_PIN;
+}
+
+void turn_alarm_off()
+{
+    ALARM_PORT->OUT &= ~(1<<ALARM_ON_PIN);
 }
 
 void count_down(uint32_t initial)
@@ -209,6 +233,8 @@ void main(){
     // This will set up the periodic task for the 7 segment
     seven_segment_setup();
     setup_buttons();
+    setup_alarm();
+    turn_alarm_off();
 
     // This starts periodic polling for the sensors
     // The period is in units of 2 us, 38ms = 19000 counts
@@ -219,6 +245,7 @@ void main(){
         count_down(countdown_val);
 
         // Need to setup stop button edge triggered interrupt here
+        turn_alarm_on();
 
         while (1){
             // Figure out object position based on distances
@@ -231,7 +258,7 @@ void main(){
             LaunchPad_Output(current_state.color);
             // Update motor speed and direction
             //Drive_Motors(current_state.left_speed, current_state.left_dir,
-              //           current_state.right_speed, current_state.right_dir);
+            //             current_state.right_speed, current_state.right_dir);
         }
     }
 }

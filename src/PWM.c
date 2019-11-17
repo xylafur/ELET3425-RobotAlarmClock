@@ -195,7 +195,6 @@ void PWM_Duty4(uint16_t right_duty){
 }
 
 
-
 //***************************PWM_Duty3*******************************
 // change duty cycle of PWM output on P2.6
 // Inputs:  duty3
@@ -218,5 +217,3 @@ void LeftMotor_PWM(uint16_t left_duty){
     }
     TIMER_A0->CCR[4] = left_duty;
 }
-
-

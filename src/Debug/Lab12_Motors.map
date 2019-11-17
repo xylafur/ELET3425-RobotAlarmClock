@@ -1,17 +1,17 @@
 ******************************************************************************
                   TI ARM Linker Unix v18.1.4                   
 ******************************************************************************
->> Linked Sun Nov 17 01:29:08 2019
+>> Linked Sun Nov 17 13:15:42 2019
 
 OUTPUT FILE NAME:   <Lab12_Motors.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00001e05
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00001e8d
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  MAIN                  00000000   00040000  00001f7c  0003e084  R  X
+  MAIN                  00000000   00040000  00001ff8  0003e008  R  X
   INFO                  00200000   00004000  00000000  00004000  R  X
   SRAM_CODE             01000000   00010000  00000843  0000f7bd  RW X
   SRAM_DATA             20000000   00010000  00000843  0000f7bd  RW  
@@ -21,11 +21,11 @@ SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    00001f80   00001f80    r-x
+00000000    00000000    00001ff8   00001ff8    r-x
   00000000    00000000    000000e4   000000e4    r-- .intvecs
-  000000e4    000000e4    00001e06   00001e06    r-x .text
-  00001eea    00001eea    0000000a   0000000a    r-- .const
-  00001ef8    00001ef8    00000088   00000088    r-- .cinit
+  000000e4    000000e4    00001e82   00001e82    r-x .text
+  00001f66    00001f66    0000000a   0000000a    r-- .const
+  00001f70    00001f70    00000088   00000088    r-- .cinit
 20000000    20000000    00000643   00000000    rw-
   20000000    20000000    00000400   00000000    rw- .sysmem
   20000400    20000400    00000158   00000000    rw- .bss
@@ -42,46 +42,46 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    000000e4     
                   00000000    000000e4     startup_msp432p401r_ccs.obj (.intvecs:retain)
 
-.text      0    000000e4    00001e06     
+.text      0    000000e4    00001e82     
                   000000e4    000005b6     EUSCIA0.obj (.text)
                   0000069a    00000002     --HOLE-- [fill = 0]
                   0000069c    0000032c     system_msp432p401r.obj (.text)
-                  000009c8    000002e8     Motor.obj (.text)
-                  00000cb0    00000288     Lab12_Motorsmain.obj (.text)
-                  00000f38    00000288     PWM.obj (.text)
-                  000011c0    0000023c     SevenSegment.obj (.text)
-                  000013fc    000001e0     Clock.obj (.text)
-                  000015dc    000001e0     LaunchPad.obj (.text)
-                  000017bc    00000174     ADC14.obj (.text)
-                  00001930    000000d0     TimerA2.obj (.text)
-                  00001a00    000000bc     SysTick.obj (.text)
-                  00001abc    000000ac     TimerA0.obj (.text)
-                  00001b68    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
-                  00001c04    00000090     TimerA1.obj (.text)
-                  00001c94    00000078     FIFO0.obj (.text)
-                  00001d0c    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  00001d74    0000004c     fsm.obj (.text)
-                  00001dc0    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
-                  00001e04    00000038                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
-                  00001e3c    00000028     Lab12_Motorsmain.obj (.text:down_button)
-                  00001e64    00000028     Lab12_Motorsmain.obj (.text:start_button)
-                  00001e8c    00000028     Lab12_Motorsmain.obj (.text:up_button)
-                  00001eb4    00000012     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
-                  00001ec6    0000000e                                   : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  00001ed4    0000000e     startup_msp432p401r_ccs.obj (.text)
-                  00001ee2    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  00001ee6    00000004                                   : exit.c.obj (.text:abort:abort)
+                  000009c8    00000310     Lab12_Motorsmain.obj (.text)
+                  00000cd8    000002e8     Motor.obj (.text)
+                  00000fc0    00000288     PWM.obj (.text)
+                  00001248    0000023c     SevenSegment.obj (.text)
+                  00001484    000001e0     Clock.obj (.text)
+                  00001664    000001e0     LaunchPad.obj (.text)
+                  00001844    00000174     ADC14.obj (.text)
+                  000019b8    000000d0     TimerA2.obj (.text)
+                  00001a88    000000bc     SysTick.obj (.text)
+                  00001b44    000000ac     TimerA0.obj (.text)
+                  00001bf0    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  00001c8c    00000090     TimerA1.obj (.text)
+                  00001d1c    00000078     FIFO0.obj (.text)
+                  00001d94    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  00001dfc    0000004c     fsm.obj (.text)
+                  00001e48    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00001e8c    00000038                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  00001ec4    00000024     Lab12_Motorsmain.obj (.text:down_button)
+                  00001ee8    00000024     Lab12_Motorsmain.obj (.text:start_button)
+                  00001f0c    00000024     Lab12_Motorsmain.obj (.text:up_button)
+                  00001f30    00000012     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init_nomemset:__TI_zero_init_nomemset)
+                  00001f42    0000000e                                   : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  00001f50    0000000e     startup_msp432p401r_ccs.obj (.text)
+                  00001f5e    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  00001f62    00000004                                   : exit.c.obj (.text:abort:abort)
 
-.const     0    00001eea    0000000a     
-                  00001eea    0000000a     SevenSegment.obj (.const:.string:number)
+.const     0    00001f66    0000000a     
+                  00001f66    0000000a     SevenSegment.obj (.const:.string:number)
 
-.cinit     0    00001ef8    00000088     
-                  00001ef8    0000005f     (.cinit..data.load) [load image, compression = lzss]
-                  00001f57    00000001     --HOLE-- [fill = 0]
-                  00001f58    0000000c     (__TI_handler_table)
-                  00001f64    00000004     --HOLE-- [fill = 0]
-                  00001f68    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  00001f70    00000010     (__TI_cinit_table)
+.cinit     0    00001f70    00000088     
+                  00001f70    0000005f     (.cinit..data.load) [load image, compression = lzss]
+                  00001fcf    00000001     --HOLE-- [fill = 0]
+                  00001fd0    0000000c     (__TI_handler_table)
+                  00001fdc    00000004     --HOLE-- [fill = 0]
+                  00001fe0    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00001fe8    00000010     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
@@ -128,7 +128,7 @@ MODULE SUMMARY
        ------                        ----   -------   -------
     ./
        EUSCIA0.obj                   1462   0         24     
-       Lab12_Motorsmain.obj          768    0         120    
+       Lab12_Motorsmain.obj          892    0         120    
        system_msp432p401r.obj        812    0         8      
        Motor.obj                     744    0         4      
        PWM.obj                       648    0         0      
@@ -144,7 +144,7 @@ MODULE SUMMARY
        TimerA0.obj                   172    0         8      
        TimerA1.obj                   144    0         8      
     +--+-----------------------------+------+---------+---------+
-       Total:                        7260   238       1158   
+       Total:                        7384   238       1158   
                                                              
     /opt/ccstudio/ccsv8/tools/compiler/ti-cgt-arm_18.1.4.LTS/lib/rtsv7M4_T_le_v4SPD16_eabi.lib
        memcpy_t2.asm.obj             156    0         0      
@@ -162,19 +162,19 @@ MODULE SUMMARY
        Stack:                        0      0         1024   
        Linker Generated:             0      131       0      
     +--+-----------------------------+------+---------+---------+
-       Grand Total:                  7684   369       4230   
+       Grand Total:                  7808   369       4230   
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00001f70 records: 2, size/record: 8, table size: 16
-	.data: load addr=00001ef8, load size=0000005f bytes, run addr=20000558, run size=000000eb bytes, compression=lzss
-	.bss: load addr=00001f68, load size=00000008 bytes, run addr=20000400, run size=00000158 bytes, compression=zero_init
+__TI_cinit_table @ 00001fe8 records: 2, size/record: 8, table size: 16
+	.data: load addr=00001f70, load size=0000005f bytes, run addr=20000558, run size=000000eb bytes, compression=lzss
+	.bss: load addr=00001fe0, load size=00000008 bytes, run addr=20000400, run size=00000158 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00001f58 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 00001fd0 records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 	index: 2, handler: __TI_zero_init
@@ -184,38 +184,38 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                          
 -------   ----                          
-000018d5  ADC0_InitSWTriggerCh12        
-000018db  ADC0_InitSWTriggerCh17_12_16  
-000017bd  ADC0_InitSWTriggerCh6         
-0000182d  ADC0_InitSWTriggerCh67        
-00001ee1  ADC14_IRQHandler              
-000018d7  ADC_In12                      
-000018dd  ADC_In17_12_16                
-0000180d  ADC_In6                       
-0000188f  ADC_In67                      
-00001ee1  AES256_IRQHandler             
-00001ee1  BusFault_Handler              
-00001ee7  C$$EXIT                       
-00001ee1  COMP_E0_IRQHandler            
-00001ee1  COMP_E1_IRQHandler            
+0000195d  ADC0_InitSWTriggerCh12        
+00001963  ADC0_InitSWTriggerCh17_12_16  
+00001845  ADC0_InitSWTriggerCh6         
+000018b5  ADC0_InitSWTriggerCh67        
+00001f5d  ADC14_IRQHandler              
+0000195f  ADC_In12                      
+00001965  ADC_In17_12_16                
+00001895  ADC_In6                       
+00001917  ADC_In67                      
+00001f5d  AES256_IRQHandler             
+00001f5d  BusFault_Handler              
+00001f63  C$$EXIT                       
+00001f5d  COMP_E0_IRQHandler            
+00001f5d  COMP_E1_IRQHandler            
 20000628  CPMwait                       
-00001ee1  CS_IRQHandler                 
+00001f5d  CS_IRQHandler                 
 20000641  CURRENT_LEFT_WHEEL_DIRECTION  
 20000640  CURRENT_RIGHT_WHEEL_DIRECTION 
 20000620  ClockFrequency                
-00001551  Clock_Delay1ms                
-00001527  Clock_Delay1us                
-00001513  Clock_GetFreq                 
-000013fd  Clock_Init48MHz               
+000015d9  Clock_Delay1ms                
+000015af  Clock_Delay1us                
+0000159b  Clock_GetFreq                 
+00001485  Clock_Init48MHz               
 20000634  Crystalstable                 
-00001ee1  DMA_ERR_IRQHandler            
-00001ee1  DMA_INT0_IRQHandler           
-00001ee1  DMA_INT1_IRQHandler           
-00001ee1  DMA_INT2_IRQHandler           
-00001ee1  DMA_INT3_IRQHandler           
-00001ee1  DebugMon_Handler              
-00001ee1  Default_Handler               
-00000bd7  Drive_Motors                  
+00001f5d  DMA_ERR_IRQHandler            
+00001f5d  DMA_INT0_IRQHandler           
+00001f5d  DMA_INT1_IRQHandler           
+00001f5d  DMA_INT2_IRQHandler           
+00001f5d  DMA_INT3_IRQHandler           
+00001f5d  DebugMon_Handler              
+00001f5d  Default_Handler               
+00000ee7  Drive_Motors                  
 00000175  EUSCIA0_IRQHandler            
 00000175  EUSCIA0_IRQHandler            
 00000149  EUSCIA0_InChar                
@@ -233,164 +233,167 @@ address   name
 0000058d  EUSCIA0_OutUHex               
 000005f3  EUSCIA0_OutUHex2              
 000005d1  EUSCIA0outnibble              
-00001ee1  EUSCIA1_IRQHandler            
-00001ee1  EUSCIA2_IRQHandler            
-00001ee1  EUSCIA3_IRQHandler            
-00001ee1  EUSCIB0_IRQHandler            
-00001ee1  EUSCIB1_IRQHandler            
-00001ee1  EUSCIB2_IRQHandler            
-00001ee1  EUSCIB3_IRQHandler            
-00001ee1  FLCTL_IRQHandler              
-00001ee1  FPU_IRQHandler                
+00001f5d  EUSCIA1_IRQHandler            
+00001f5d  EUSCIA2_IRQHandler            
+00001f5d  EUSCIA3_IRQHandler            
+00001f5d  EUSCIB0_IRQHandler            
+00001f5d  EUSCIB1_IRQHandler            
+00001f5d  EUSCIB2_IRQHandler            
+00001f5d  EUSCIB3_IRQHandler            
+00001f5d  FLCTL_IRQHandler              
+00001f5d  FPU_IRQHandler                
 20000558  FSM_States                    
-00001ee1  HardFault_Handler             
+00001f5d  HardFault_Handler             
 20000630  IFlags                        
-000015dd  LaunchPad_Init                
-0000173b  LaunchPad_Input               
-00001755  LaunchPad_LED                 
-00001773  LaunchPad_Output              
-00001167  LeftMotor_PWM                 
-00001ee1  MemManage_Handler             
+00001665  LaunchPad_Init                
+000017c3  LaunchPad_Input               
+000017dd  LaunchPad_LED                 
+000017fb  LaunchPad_Output              
+000011ef  LeftMotor_PWM                 
+00001f5d  MemManage_Handler             
 20000524  Messagec                      
 2000052c  Messageindexc                 
-00000ba7  Motor_Backward                
-00000afd  Motor_Forward                 
-000009c9  Motor_Init                    
-00000b77  Motor_Left                    
-00000b47  Motor_Right                   
-00000aed  Motor_Stop                    
-00001ee1  NMI_Handler                   
-00001ee1  PCM_IRQHandler                
-00001ee1  PORT1_IRQHandler              
-00001ee1  PORT2_IRQHandler              
-00001ee1  PORT3_IRQHandler              
-00001ee1  PORT4_IRQHandler              
-00001ee1  PORT5_IRQHandler              
-00001ee1  PORT6_IRQHandler              
-00001ee1  PSS_IRQHandler                
-00001023  PWM_Duty1                     
-00001043  PWM_Duty2                     
-00001107  PWM_Duty3                     
-00001127  PWM_Duty4                     
-00000f39  PWM_Init1                     
-00000f9f  PWM_Init12                    
-00001063  PWM_Init34                    
-00000cb1  Pause                         
-00001ee1  PendSV_Handler                
+00000eb7  Motor_Backward                
+00000e0d  Motor_Forward                 
+00000cd9  Motor_Init                    
+00000e87  Motor_Left                    
+00000e57  Motor_Right                   
+00000dfd  Motor_Stop                    
+00001f5d  NMI_Handler                   
+00001f5d  PCM_IRQHandler                
+00001f5d  PORT1_IRQHandler              
+00001f5d  PORT2_IRQHandler              
+00001f5d  PORT3_IRQHandler              
+00001f5d  PORT4_IRQHandler              
+00001f5d  PORT5_IRQHandler              
+00001f5d  PORT6_IRQHandler              
+00001f5d  PSS_IRQHandler                
+000010ab  PWM_Duty1                     
+000010cb  PWM_Duty2                     
+0000118f  PWM_Duty3                     
+000011af  PWM_Duty4                     
+00000fc1  PWM_Init1                     
+00001027  PWM_Init12                    
+000010eb  PWM_Init34                    
+000009c9  Pause                         
+00001f5d  PendSV_Handler                
 2000062c  Postwait                      
 20000624  Prewait                       
-00001ee1  RTC_C_IRQHandler              
-00001ed5  Reset_Handler                 
-00001147  RightMotor_PWM                
-00001cf7  RxFifo0_Get                   
-00001ce7  RxFifo0_Init                  
-00001ce9  RxFifo0_Put                   
-00001d03  RxFifo0_Size                  
-00001ee1  SVC_Handler                   
-00001ee1  SysTick_Handler               
-00001a01  SysTick_Init                  
-00001a11  SysTick_Wait                  
-00001a85  SysTick_Wait10ms              
-00001a37  SysTick_Wait10us              
-00001a5f  SysTick_Wait1us               
+00001f5d  RTC_C_IRQHandler              
+00001f51  Reset_Handler                 
+000011cf  RightMotor_PWM                
+00001d7f  RxFifo0_Get                   
+00001d6f  RxFifo0_Init                  
+00001d71  RxFifo0_Put                   
+00001d8b  RxFifo0_Size                  
+00001f5d  SVC_Handler                   
+00001f5d  SysTick_Handler               
+00001a89  SysTick_Init                  
+00001a99  SysTick_Wait                  
+00001b0d  SysTick_Wait10ms              
+00001abf  SysTick_Wait10us              
+00001ae7  SysTick_Wait1us               
 2000063c  SystemCoreClock               
 0000069d  SystemCoreClockUpdate         
 00000911  SystemInit                    
-00001ee1  T32_INT1_IRQHandler           
-00001ee1  T32_INT2_IRQHandler           
-00001ee1  T32_INTC_IRQHandler           
-00001b37  TA0_0_IRQHandler              
-00001b37  TA0_0_IRQHandler              
-00001ee1  TA0_N_IRQHandler              
-00001c65  TA1_0_IRQHandler              
-00001c65  TA1_0_IRQHandler              
-00001ee1  TA1_N_IRQHandler              
-000019cb  TA2_0_IRQHandler              
-000019cb  TA2_0_IRQHandler              
-00001ee1  TA2_N_IRQHandler              
-00001ee1  TA3_0_IRQHandler              
-00001ee1  TA3_N_IRQHandler              
+00001f5d  T32_INT1_IRQHandler           
+00001f5d  T32_INT2_IRQHandler           
+00001f5d  T32_INTC_IRQHandler           
+00001bbf  TA0_0_IRQHandler              
+00001bbf  TA0_0_IRQHandler              
+00001f5d  TA0_N_IRQHandler              
+00001ced  TA1_0_IRQHandler              
+00001ced  TA1_0_IRQHandler              
+00001f5d  TA1_N_IRQHandler              
+00001a53  TA2_0_IRQHandler              
+00001a53  TA2_0_IRQHandler              
+00001f5d  TA2_N_IRQHandler              
+00001f5d  TA3_0_IRQHandler              
+00001f5d  TA3_N_IRQHandler              
 20000530  TimerA0Task                   
-00001abd  TimerA0_Init                  
-00001b21  TimerA0_Stop                  
+00001b45  TimerA0_Init                  
+00001ba9  TimerA0_Stop                  
 20000534  TimerA1Task                   
-00001c05  TimerA1_Init                  
-00001c63  TimerA1_Stop                  
+00001c8d  TimerA1_Init                  
+00001ceb  TimerA1_Stop                  
 20000538  TimerA2Task                   
-0000198f  TimerA2_Change_Task           
-00001931  TimerA2_Init                  
-000019b7  TimerA2_Stop                  
-00001cd7  TxFifo0_Get                   
-00001c95  TxFifo0_Init                  
-00001cbd  TxFifo0_Put                   
-00001ce3  TxFifo0_Size                  
+00001a17  TimerA2_Change_Task           
+000019b9  TimerA2_Init                  
+00001a3f  TimerA2_Stop                  
+00001d5f  TxFifo0_Get                   
+00001d1d  TxFifo0_Init                  
+00001d45  TxFifo0_Put                   
+00001d6b  TxFifo0_Size                  
 20000400  TxHistogram                   
-00001ee1  UsageFault_Handler            
+00001f5d  UsageFault_Handler            
 4000480c  WDTCTL_SYM                    
-00001ee1  WDT_A_IRQHandler              
+00001f5d  WDT_A_IRQHandler              
 20010000  __STACK_END                   
 00000200  __STACK_SIZE                  
 00000400  __SYSMEM_SIZE                 
-00001f70  __TI_CINIT_Base               
-00001f80  __TI_CINIT_Limit              
-00001f58  __TI_Handler_Table_Base       
-00001f64  __TI_Handler_Table_Limit      
-00001dc1  __TI_auto_init_nobinit_nopinit
-00001d0d  __TI_decompress_lzss          
-00001ec7  __TI_decompress_none          
+00001fe8  __TI_CINIT_Base               
+00001ff8  __TI_CINIT_Limit              
+00001fd0  __TI_Handler_Table_Base       
+00001fdc  __TI_Handler_Table_Limit      
+00001e49  __TI_auto_init_nobinit_nopinit
+00001d95  __TI_decompress_lzss          
+00001f43  __TI_decompress_none          
 ffffffff  __TI_pprof_out_hndl           
 ffffffff  __TI_prof_data_size           
 ffffffff  __TI_prof_data_start          
 00000000  __TI_static_base__            
-00001eb5  __TI_zero_init_nomemset       
-00001b69  __aeabi_memcpy                
-00001b69  __aeabi_memcpy4               
-00001b69  __aeabi_memcpy8               
+00001f31  __TI_zero_init_nomemset       
+00001bf1  __aeabi_memcpy                
+00001bf1  __aeabi_memcpy4               
+00001bf1  __aeabi_memcpy8               
 ffffffff  __binit__                     
 ffffffff  __c_args__                    
 UNDEFED   __mpu_init                    
 2000fe00  __stack                       
-00001e05  _c_int00_noargs               
+00001e8d  _c_int00_noargs               
 20000000  _sys_memory                   
 UNDEFED   _system_post_cinit            
-00001ee3  _system_pre_init              
-00001ee7  abort                         
-00000cc5  average_array                 
+00001f5f  _system_pre_init              
+00001f63  abort                         
+000009dd  average_array                 
 ffffffff  binit                         
 2000053c  center_distance               
-00000d05  convert_sensor_to_distance    
-00000e3f  count_down                    
+00000a1d  convert_sensor_to_distance    
+00000bc1  count_down                    
 20000642  current_segment               
-00001519  delay                         
-00001d75  distance_to_obj               
-00001e3d  down_button                   
-00000e0b  get_timer_val                 
+000015a1  delay                         
+00001dfd  distance_to_obj               
+00001ec5  down_button                   
+00000b23  get_timer_val                 
 00000000  interruptVectors              
 20000540  left_distance                 
-00000e67  main                          
-00001b69  memcpy                        
-00001eea  number                        
-00001249  pow                           
+00000be9  main                          
+00001bf1  memcpy                        
+00001f66  number                        
+000012d1  pow                           
 20000544  right_distance                
 20000548  segment_mapping               
 20000638  segment_pin_map               
-00001389  segment_update_task           
+00001411  segment_update_task           
 2000054c  sensor_center                 
 20000500  sensor_center_buff            
 20000550  sensor_left                   
 2000050c  sensor_left_buff              
 20000554  sensor_right                  
 20000518  sensor_right_buff             
-00001655  set_color                     
-0000164d  set_color_red                 
-00001309  set_segment_value             
-00000dbf  setup_buttons                 
-00001281  seven_segment_display         
-000011c1  seven_segment_setup           
-00001e65  start_button                  
-00000d5b  timerA2_task                  
-00001e8d  up_button                     
-00001339  write_to_segment              
+000016dd  set_color                     
+000016d5  set_color_red                 
+00001391  set_segment_value             
+00000b77  setup_alarm                   
+00000ad7  setup_buttons                 
+00001309  seven_segment_display         
+00001249  seven_segment_setup           
+00001ee9  start_button                  
+00000a73  timerA2_task                  
+00000bb5  turn_alarm_off                
+00000ba9  turn_alarm_on                 
+00001f0d  up_button                     
+000013c1  write_to_segment              
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -420,150 +423,153 @@ address   name
 00000611  EUSCIA0_InString              
 0000069d  SystemCoreClockUpdate         
 00000911  SystemInit                    
-000009c9  Motor_Init                    
-00000aed  Motor_Stop                    
-00000afd  Motor_Forward                 
-00000b47  Motor_Right                   
-00000b77  Motor_Left                    
-00000ba7  Motor_Backward                
-00000bd7  Drive_Motors                  
-00000cb1  Pause                         
-00000cc5  average_array                 
-00000d05  convert_sensor_to_distance    
-00000d5b  timerA2_task                  
-00000dbf  setup_buttons                 
-00000e0b  get_timer_val                 
-00000e3f  count_down                    
-00000e67  main                          
-00000f39  PWM_Init1                     
-00000f9f  PWM_Init12                    
-00001023  PWM_Duty1                     
-00001043  PWM_Duty2                     
-00001063  PWM_Init34                    
-00001107  PWM_Duty3                     
-00001127  PWM_Duty4                     
-00001147  RightMotor_PWM                
-00001167  LeftMotor_PWM                 
-000011c1  seven_segment_setup           
-00001249  pow                           
-00001281  seven_segment_display         
-00001309  set_segment_value             
-00001339  write_to_segment              
-00001389  segment_update_task           
-000013fd  Clock_Init48MHz               
-00001513  Clock_GetFreq                 
-00001519  delay                         
-00001527  Clock_Delay1us                
-00001551  Clock_Delay1ms                
-000015dd  LaunchPad_Init                
-0000164d  set_color_red                 
-00001655  set_color                     
-0000173b  LaunchPad_Input               
-00001755  LaunchPad_LED                 
-00001773  LaunchPad_Output              
-000017bd  ADC0_InitSWTriggerCh6         
-0000180d  ADC_In6                       
-0000182d  ADC0_InitSWTriggerCh67        
-0000188f  ADC_In67                      
-000018d5  ADC0_InitSWTriggerCh12        
-000018d7  ADC_In12                      
-000018db  ADC0_InitSWTriggerCh17_12_16  
-000018dd  ADC_In17_12_16                
-00001931  TimerA2_Init                  
-0000198f  TimerA2_Change_Task           
-000019b7  TimerA2_Stop                  
-000019cb  TA2_0_IRQHandler              
-000019cb  TA2_0_IRQHandler              
-00001a01  SysTick_Init                  
-00001a11  SysTick_Wait                  
-00001a37  SysTick_Wait10us              
-00001a5f  SysTick_Wait1us               
-00001a85  SysTick_Wait10ms              
-00001abd  TimerA0_Init                  
-00001b21  TimerA0_Stop                  
-00001b37  TA0_0_IRQHandler              
-00001b37  TA0_0_IRQHandler              
-00001b69  __aeabi_memcpy                
-00001b69  __aeabi_memcpy4               
-00001b69  __aeabi_memcpy8               
-00001b69  memcpy                        
-00001c05  TimerA1_Init                  
-00001c63  TimerA1_Stop                  
-00001c65  TA1_0_IRQHandler              
-00001c65  TA1_0_IRQHandler              
-00001c95  TxFifo0_Init                  
-00001cbd  TxFifo0_Put                   
-00001cd7  TxFifo0_Get                   
-00001ce3  TxFifo0_Size                  
-00001ce7  RxFifo0_Init                  
-00001ce9  RxFifo0_Put                   
-00001cf7  RxFifo0_Get                   
-00001d03  RxFifo0_Size                  
-00001d0d  __TI_decompress_lzss          
-00001d75  distance_to_obj               
-00001dc1  __TI_auto_init_nobinit_nopinit
-00001e05  _c_int00_noargs               
-00001e3d  down_button                   
-00001e65  start_button                  
-00001e8d  up_button                     
-00001eb5  __TI_zero_init_nomemset       
-00001ec7  __TI_decompress_none          
-00001ed5  Reset_Handler                 
-00001ee1  ADC14_IRQHandler              
-00001ee1  AES256_IRQHandler             
-00001ee1  BusFault_Handler              
-00001ee1  COMP_E0_IRQHandler            
-00001ee1  COMP_E1_IRQHandler            
-00001ee1  CS_IRQHandler                 
-00001ee1  DMA_ERR_IRQHandler            
-00001ee1  DMA_INT0_IRQHandler           
-00001ee1  DMA_INT1_IRQHandler           
-00001ee1  DMA_INT2_IRQHandler           
-00001ee1  DMA_INT3_IRQHandler           
-00001ee1  DebugMon_Handler              
-00001ee1  Default_Handler               
-00001ee1  EUSCIA1_IRQHandler            
-00001ee1  EUSCIA2_IRQHandler            
-00001ee1  EUSCIA3_IRQHandler            
-00001ee1  EUSCIB0_IRQHandler            
-00001ee1  EUSCIB1_IRQHandler            
-00001ee1  EUSCIB2_IRQHandler            
-00001ee1  EUSCIB3_IRQHandler            
-00001ee1  FLCTL_IRQHandler              
-00001ee1  FPU_IRQHandler                
-00001ee1  HardFault_Handler             
-00001ee1  MemManage_Handler             
-00001ee1  NMI_Handler                   
-00001ee1  PCM_IRQHandler                
-00001ee1  PORT1_IRQHandler              
-00001ee1  PORT2_IRQHandler              
-00001ee1  PORT3_IRQHandler              
-00001ee1  PORT4_IRQHandler              
-00001ee1  PORT5_IRQHandler              
-00001ee1  PORT6_IRQHandler              
-00001ee1  PSS_IRQHandler                
-00001ee1  PendSV_Handler                
-00001ee1  RTC_C_IRQHandler              
-00001ee1  SVC_Handler                   
-00001ee1  SysTick_Handler               
-00001ee1  T32_INT1_IRQHandler           
-00001ee1  T32_INT2_IRQHandler           
-00001ee1  T32_INTC_IRQHandler           
-00001ee1  TA0_N_IRQHandler              
-00001ee1  TA1_N_IRQHandler              
-00001ee1  TA2_N_IRQHandler              
-00001ee1  TA3_0_IRQHandler              
-00001ee1  TA3_N_IRQHandler              
-00001ee1  UsageFault_Handler            
-00001ee1  WDT_A_IRQHandler              
-00001ee3  _system_pre_init              
-00001ee7  C$$EXIT                       
-00001ee7  abort                         
-00001eea  number                        
-00001f58  __TI_Handler_Table_Base       
-00001f64  __TI_Handler_Table_Limit      
-00001f70  __TI_CINIT_Base               
-00001f80  __TI_CINIT_Limit              
+000009c9  Pause                         
+000009dd  average_array                 
+00000a1d  convert_sensor_to_distance    
+00000a73  timerA2_task                  
+00000ad7  setup_buttons                 
+00000b23  get_timer_val                 
+00000b77  setup_alarm                   
+00000ba9  turn_alarm_on                 
+00000bb5  turn_alarm_off                
+00000bc1  count_down                    
+00000be9  main                          
+00000cd9  Motor_Init                    
+00000dfd  Motor_Stop                    
+00000e0d  Motor_Forward                 
+00000e57  Motor_Right                   
+00000e87  Motor_Left                    
+00000eb7  Motor_Backward                
+00000ee7  Drive_Motors                  
+00000fc1  PWM_Init1                     
+00001027  PWM_Init12                    
+000010ab  PWM_Duty1                     
+000010cb  PWM_Duty2                     
+000010eb  PWM_Init34                    
+0000118f  PWM_Duty3                     
+000011af  PWM_Duty4                     
+000011cf  RightMotor_PWM                
+000011ef  LeftMotor_PWM                 
+00001249  seven_segment_setup           
+000012d1  pow                           
+00001309  seven_segment_display         
+00001391  set_segment_value             
+000013c1  write_to_segment              
+00001411  segment_update_task           
+00001485  Clock_Init48MHz               
+0000159b  Clock_GetFreq                 
+000015a1  delay                         
+000015af  Clock_Delay1us                
+000015d9  Clock_Delay1ms                
+00001665  LaunchPad_Init                
+000016d5  set_color_red                 
+000016dd  set_color                     
+000017c3  LaunchPad_Input               
+000017dd  LaunchPad_LED                 
+000017fb  LaunchPad_Output              
+00001845  ADC0_InitSWTriggerCh6         
+00001895  ADC_In6                       
+000018b5  ADC0_InitSWTriggerCh67        
+00001917  ADC_In67                      
+0000195d  ADC0_InitSWTriggerCh12        
+0000195f  ADC_In12                      
+00001963  ADC0_InitSWTriggerCh17_12_16  
+00001965  ADC_In17_12_16                
+000019b9  TimerA2_Init                  
+00001a17  TimerA2_Change_Task           
+00001a3f  TimerA2_Stop                  
+00001a53  TA2_0_IRQHandler              
+00001a53  TA2_0_IRQHandler              
+00001a89  SysTick_Init                  
+00001a99  SysTick_Wait                  
+00001abf  SysTick_Wait10us              
+00001ae7  SysTick_Wait1us               
+00001b0d  SysTick_Wait10ms              
+00001b45  TimerA0_Init                  
+00001ba9  TimerA0_Stop                  
+00001bbf  TA0_0_IRQHandler              
+00001bbf  TA0_0_IRQHandler              
+00001bf1  __aeabi_memcpy                
+00001bf1  __aeabi_memcpy4               
+00001bf1  __aeabi_memcpy8               
+00001bf1  memcpy                        
+00001c8d  TimerA1_Init                  
+00001ceb  TimerA1_Stop                  
+00001ced  TA1_0_IRQHandler              
+00001ced  TA1_0_IRQHandler              
+00001d1d  TxFifo0_Init                  
+00001d45  TxFifo0_Put                   
+00001d5f  TxFifo0_Get                   
+00001d6b  TxFifo0_Size                  
+00001d6f  RxFifo0_Init                  
+00001d71  RxFifo0_Put                   
+00001d7f  RxFifo0_Get                   
+00001d8b  RxFifo0_Size                  
+00001d95  __TI_decompress_lzss          
+00001dfd  distance_to_obj               
+00001e49  __TI_auto_init_nobinit_nopinit
+00001e8d  _c_int00_noargs               
+00001ec5  down_button                   
+00001ee9  start_button                  
+00001f0d  up_button                     
+00001f31  __TI_zero_init_nomemset       
+00001f43  __TI_decompress_none          
+00001f51  Reset_Handler                 
+00001f5d  ADC14_IRQHandler              
+00001f5d  AES256_IRQHandler             
+00001f5d  BusFault_Handler              
+00001f5d  COMP_E0_IRQHandler            
+00001f5d  COMP_E1_IRQHandler            
+00001f5d  CS_IRQHandler                 
+00001f5d  DMA_ERR_IRQHandler            
+00001f5d  DMA_INT0_IRQHandler           
+00001f5d  DMA_INT1_IRQHandler           
+00001f5d  DMA_INT2_IRQHandler           
+00001f5d  DMA_INT3_IRQHandler           
+00001f5d  DebugMon_Handler              
+00001f5d  Default_Handler               
+00001f5d  EUSCIA1_IRQHandler            
+00001f5d  EUSCIA2_IRQHandler            
+00001f5d  EUSCIA3_IRQHandler            
+00001f5d  EUSCIB0_IRQHandler            
+00001f5d  EUSCIB1_IRQHandler            
+00001f5d  EUSCIB2_IRQHandler            
+00001f5d  EUSCIB3_IRQHandler            
+00001f5d  FLCTL_IRQHandler              
+00001f5d  FPU_IRQHandler                
+00001f5d  HardFault_Handler             
+00001f5d  MemManage_Handler             
+00001f5d  NMI_Handler                   
+00001f5d  PCM_IRQHandler                
+00001f5d  PORT1_IRQHandler              
+00001f5d  PORT2_IRQHandler              
+00001f5d  PORT3_IRQHandler              
+00001f5d  PORT4_IRQHandler              
+00001f5d  PORT5_IRQHandler              
+00001f5d  PORT6_IRQHandler              
+00001f5d  PSS_IRQHandler                
+00001f5d  PendSV_Handler                
+00001f5d  RTC_C_IRQHandler              
+00001f5d  SVC_Handler                   
+00001f5d  SysTick_Handler               
+00001f5d  T32_INT1_IRQHandler           
+00001f5d  T32_INT2_IRQHandler           
+00001f5d  T32_INTC_IRQHandler           
+00001f5d  TA0_N_IRQHandler              
+00001f5d  TA1_N_IRQHandler              
+00001f5d  TA2_N_IRQHandler              
+00001f5d  TA3_0_IRQHandler              
+00001f5d  TA3_N_IRQHandler              
+00001f5d  UsageFault_Handler            
+00001f5d  WDT_A_IRQHandler              
+00001f5f  _system_pre_init              
+00001f63  C$$EXIT                       
+00001f63  abort                         
+00001f66  number                        
+00001fd0  __TI_Handler_Table_Base       
+00001fdc  __TI_Handler_Table_Limit      
+00001fe8  __TI_CINIT_Base               
+00001ff8  __TI_CINIT_Limit              
 20000000  _sys_memory                   
 20000400  TxHistogram                   
 20000500  sensor_center_buff            
@@ -605,4 +611,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                    
 UNDEFED   _system_post_cinit            
 
-[207 symbols]
+[210 symbols]
