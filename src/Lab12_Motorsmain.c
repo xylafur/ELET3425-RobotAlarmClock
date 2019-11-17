@@ -187,6 +187,53 @@ uint32_t get_timer_val()
     return timer_val;
 }
 
+uint8_t alarming = 1;
+void button_task(void)
+{
+    alarming = 0;
+}
+
+
+// No idea why this is the interrupt number... seems like it should be 36.  This is from some other
+// code that uses the same port though
+#define INTERRUPT_NUMBER (0x8 << 3)
+#define PRIORITY 0x40000000
+
+void setup_stop_button(void)
+{
+    // Make the interrupt rising edge triggered, set to 0 for rising
+    BUTTON_PORT->IES &= ~(1<<START_BUTTON_PIN);
+    // Clear out old interrupt flags just in case
+    BUTTON_PORT->IFG = 0;
+    // Enable the interrupt
+    BUTTON_PORT->IE &= ~(1<<START_BUTTON_PIN);
+
+
+    //set the priority in the NVIC table
+    NVIC->IP[INTERRUPT_NUMBER] = (NVIC->IP[INTERRUPT_NUMBER]&0xFFFFFF) | PRIORITY;
+    NVIC->ISER[1] |= INTERRUPT_NUMBER;
+}
+
+void disable_stop_button(void)
+{
+
+    BUTTON_PORT->IFG = 0;
+    BUTTON_PORT->IE &= ~(1<<START_BUTTON_PIN);
+}
+
+void enable_stop_button()
+{
+    BUTTON_PORT->IFG = 0;
+    BUTTON_PORT->IE |= (1<<START_BUTTON_PIN);
+}
+
+void PORT4_IRQHandler(void)
+{
+    BUTTON_PORT->IFG = 0;
+    button_task();
+}
+
+
 #define ALARM_PORT P5
 const ALARM_ON_PIN = 4, ALARM_OFF_PIN = 5;
 
@@ -239,15 +286,23 @@ void main(){
     // This starts periodic polling for the sensors
     // The period is in units of 2 us, 38ms = 19000 counts
     TimerA2_Init(timerA2_task, 19000);
+    setup_stop_button();
+
 
     while(1){
+        turn_alarm_off();
+        disable_stop_button();
+
         countdown_val = get_timer_val();
         count_down(countdown_val);
 
+        alarming = 1;
+
         // Need to setup stop button edge triggered interrupt here
         turn_alarm_on();
+        enable_stop_button();
 
-        while (1){
+        while (alarming){
             // Figure out object position based on distances
             transition = distance_to_obj(right_distance, center_distance, left_distance);
             // Figure out the next state based on this states transition table
@@ -260,5 +315,6 @@ void main(){
             //Drive_Motors(current_state.left_speed, current_state.left_dir,
             //             current_state.right_speed, current_state.right_dir);
         }
+        Clock_Delay1ms(1000);
     }
 }
