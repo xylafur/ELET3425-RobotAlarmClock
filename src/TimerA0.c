@@ -1,9 +1,10 @@
-// TimerA2.c
+// TimerA0.c
 // Runs on MSP432
-// Use Timer A2 in periodic mode to request interrupts at a particular
+// Use Timer A1 in periodic mode to request interrupts at a particular
 // period.
 // Daniel Valvano
 // July 5, 2017
+
 /* This example accompanies the books
    "Embedded Systems: Introduction to the MSP432 Microcontroller",
        ISBN: 978-1512185676, Jonathan Valvano, copyright (c) 2017
@@ -43,26 +44,29 @@ policies, either expressed or implied, of the FreeBSD Project.
 */
 
 #include <stdint.h>
-#include "TimerUtil.h"
 #include "msp.h"
 
 
-void (*TimerA2Task)(void);   // user function
+void (*TimerA0Task)(void);   // user function
 
-// ***************** TimerA2_Init ****************
-// Activate Timer A2 interrupts to run user task periodically
+// ***************** TimerA0_Init ****************
+// Activate Timer A0 interrupts to run user task periodically
 // Inputs:  task is a pointer to a user function
 //          period in units (24/SMCLK), 16 bits
 //
-//          Period is in units of 2 micro seconds
+//          Units of the period is 5.3 us
 // Outputs: none
-void TimerA2_Init(void(*task)(void), uint16_t period){
-  TimerA2Task = task;             // user function
-  TIMER_A2->CTL &= ~0x0030;       // halt Timer A2
-
-  TIMER_A2->CTL = TIMER_CTL_MASK(SMCLK, PRESCALE_FOUR, MODE_STOP, TA_NO_CLR,
-                                 TA_INT_NO_EN, 0x0);
-
+void TimerA0_Init(void(*task)(void), uint16_t period){
+  TimerA0Task = task;             // user function
+  TIMER_A0->CTL &= ~0x0030;       // halt Timer A0
+  // bits15-10=XXXXXX, reserved
+  // bits9-8=10,       clock source to SMCLK
+  // bits7-6=11,       input clock divider /8
+  // bits5-4=00,       stop mode
+  // bit3=X,           reserved
+  // bit2=0,           set this bit to clear
+  // bit1=0,           no interrupt on timer
+  TIMER_A0->CTL = 0x02C0;
   // bits15-14=00,     no capture mode
   // bits13-12=XX,     capture/compare input select
   // bit11=X,          synchronize capture source
@@ -75,39 +79,27 @@ void TimerA2_Init(void(*task)(void), uint16_t period){
   // bit2=0,           output this value in output mode 0
   // bit1=X,           capture overflow status
   // bit0=0,           clear capture/compare interrupt pending
-  TIMER_A2->CCTL[0] = TIMER_CCTL_MASK(0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-                                      0x1, 0x0, 0x0, 0x0, 0x0);
-
-  TIMER_A2->CCR[0] = (period - 1);   // compare match value
-
-  TIMER_A2->EX0 = 0x0005;    // configure for input clock divider /6
+  TIMER_A0->CCTL[0] = 0x0010;
+  TIMER_A0->CCR[0] = (period - 1);   // compare match value
+  TIMER_A0->EX0 = 0x0007;    // configure for input clock divider /8
 // interrupts enabled in the main program after all devices initialized
-  NVIC->IP[3] = (NVIC->IP[3]&0xFFFFFF00)|0x00000040; // priority 2
-  NVIC->ISER[0] = 0x00001000;   // enable interrupt 12 in NVIC
-  TIMER_A2->CTL |= 0x0014;      // reset and start Timer A2 in up mode
-}
-
-void TimerA2_Change_Task(void(*task)(void), uint16_t period){
-    //set new task
-    TimerA2Task = task;
-    //set new period
-    TIMER_A2->CCR[0] = (period - 1);
-    //Restart the timer from 0 and make sure its counting up
-    TIMER_A2->CTL |= 0x0014;
+  NVIC->IP[2] = (NVIC->IP[2]&0xFFFFFF00)|0x00000040; // priority 2
+  NVIC->ISER[0] = 0x00000100;   // enable interrupt 8 in NVIC
+  TIMER_A0->CTL |= 0x0014;      // reset and start Timer A1 in up mode
 }
 
 
-// ------------TimerA2_Stop------------
+// ------------TimerA0_Stop------------
 // Deactivate the interrupt running a user task periodically.
 // Input: none
 // Output: none
-void TimerA2_Stop(void){
-  TIMER_A2->CTL &= ~0x0030;       // halt Timer A2
-  NVIC->ICER[0] = 0x00001000;     // disable interrupt 12 in NVIC
+void TimerA0_Stop(void){
+  TIMER_A0->CTL &= ~0x0030;       // halt Timer A0
+  NVIC->ICER[0] = 0x00000100;     // disable interrupt 8 in NVIC
 }
 
 
-void TA2_0_IRQHandler(void){
-  TIMER_A2->CCTL[0] &= ~0x0001; // acknowledge capture/compare interrupt 0
-  (*TimerA2Task)();             // execute user task
+void TA0_0_IRQHandler(void){
+  TIMER_A0->CCTL[0] &= ~0x0001; // acknowledge capture/compare interrupt 0
+  (*TimerA0Task)();             // execute user task
 }

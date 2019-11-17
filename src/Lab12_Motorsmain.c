@@ -1,4 +1,4 @@
-// Lab12_Motorsmain.c
+ // Lab12_Motorsmain.c
 // Runs on MSP432
 // Solution to Motors lab
 // Daniel and Jonathan Valvano
@@ -59,6 +59,8 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include "../inc/Clock.h"
 #include "../inc/SysTick.h"
 #include "../inc/LaunchPad.h"
+#include "fsm.h"
+#include "SevenSegment.h"
 
 //#include "../inc/UART0.h"
 //#include "../inc/EUSCIA0.h"
@@ -66,6 +68,9 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include "../inc/Motor.h"
 #include "../inc/ADC14.h"
 #include "../inc/TimerA2.h"
+
+
+extern struct FSM_State_s FSM_States [NUM_STATES];
 
 // Driver test
 void Pause(void){
@@ -132,187 +137,41 @@ void timerA2_task(void)
 }
 #undef SENSOR_BUFFER_SIZE
 
-
-
-enum transitions_e {
-    OBJECT_LEFT = 0,
-    OBJECT_CENTER_LEFT,
-    OBJECT_CENTER,
-    OBJECT_CENTER_RIGHT,
-    OBJECT_RIGHT,
-    OBJECT_NONE,
-
-    NUM_TRANSITIONS
-};
-
-// Object distance is from 50 to 800 mm
-#define OBJECT_THRESHOLD 200
-enum transitions_e distance_to_obj(uint32_t right_distance, uint32_t center_distance, uint32_t left_distance)
-{
-    if(center_distance <= OBJECT_THRESHOLD){
-        if(right_distance <= OBJECT_THRESHOLD){
-            if(left_distance <= OBJECT_THRESHOLD){
-                return OBJECT_CENTER;
-            }
-            return OBJECT_CENTER_RIGHT;
-        }
-
-        if(left_distance <= OBJECT_THRESHOLD){
-            return OBJECT_CENTER_LEFT;
-        }
-
-        return OBJECT_CENTER;
-    }
-
-    if(right_distance <= OBJECT_THRESHOLD){
-        return OBJECT_RIGHT;
-    }
-
-    if(left_distance <= OBJECT_THRESHOLD){
-        return OBJECT_LEFT;
-    }
-
-    return OBJECT_NONE;
-}
-
-enum states_e {
-    ROTATING_LEFT = 0,
-    VEERING_LEFT,
-    MOVING_FORWARD,
-    VEERING_RIGHT,
-    ROTATING_RIGHT,
-
-    NUM_STATES
-};
-
-#define RED 0x1
-#define GREEN 0x2
-#define BLUE 0x4
-
-#define PURPLE (RED|BLUE)
-#define YELLOW (RED|GREEN)
-#define CYAN   (BLUE|GREEN)
-#define WHITE  (RED|BLUE|GREEN)
-
-
-struct FSM_State_s {
-    enum states_e state;
-
-    uint16_t left_speed;    // As a percentage from 0-100
-    uint16_t left_dir;      // Boolean value, 1 forward, 0 backwards
-
-    uint16_t right_speed;   // As a percentage from 0-100
-    uint16_t right_dir;     // Boolean value, 1 forward, 0 backwards
-    uint32_t color;
-
-    uint32_t next_state_index [NUM_TRANSITIONS];
-} FSM_State_s ;
-
-#define MOTOR_MAX_SPEED 50
-#define MOTOR_MIN_SPEED 20
-
-struct FSM_State_s FSM_States [NUM_STATES] = {
-    {ROTATING_LEFT, MOTOR_MIN_SPEED, 0, MOTOR_MIN_SPEED, 1, PURPLE,
-        {ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, ROTATING_LEFT, MOVING_FORWARD}},
-
-    {VEERING_LEFT, MOTOR_MIN_SPEED, 1, MOTOR_MAX_SPEED, 1, BLUE,
-        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
-
-    {MOVING_FORWARD, MOTOR_MAX_SPEED, 1, MOTOR_MAX_SPEED, 1, RED,
-        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
-
-    {VEERING_RIGHT, MOTOR_MAX_SPEED, 1, MOTOR_MIN_SPEED, 1, GREEN,
-        {VEERING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_LEFT, VEERING_LEFT, MOVING_FORWARD}},
-
-    {ROTATING_RIGHT, MOTOR_MAX_SPEED, 1, MOTOR_MIN_SPEED, 0, YELLOW,
-        {ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, ROTATING_RIGHT, MOVING_FORWARD}}
-};
-
-void configure_ADC()
-{
-    ADC14->CTL0 &= ~0x00000002;        // 2) ADC14ENC = 0 to allow programming
-    while(ADC14->CTL0&0x00010000){};   // 3) wait for BUSY to be zero
-    ADC14->CTL0 = 0x4223390;          // 4) single, SMCLK, on, disabled, /1, 32 SHM
-    // 31-30 ADC14PDIV  predivider,            00b = Predivide by 1
-    // 29-27 ADC14SHSx  SHM source            000b = ADC14SC bit
-    // 26    ADC14SHP   SHM pulse-mode          1b = SAMPCON the sampling timer
-    // 25    ADC14ISSH  invert sample-and-hold  0b =  not inverted
-    // 24-22 ADC14DIVx  clock divider         000b = /1
-    // 21-19 ADC14SSELx clock source select   100b = SMCLK
-    // 18-17 ADC14CONSEQx mode select          01b = Sequence of channels
-    // 16    ADC14BUSY  ADC14 busy              0b (read only)
-    // 15-12 ADC14SHT1x sample-and-hold time 0011b = 32 clocks
-    // 11-8  ADC14SHT0x sample-and-hold time 0011b = 32 clocks
-    // 7     ADC14MSC   multiple sample         1b = not multiple
-    // 6-5   reserved                          00b (reserved)
-    // 4     ADC14ON    ADC14 on                1b = powered up
-    // 3-2   reserved                          00b (reserved)
-    // 1     ADC14ENC   enable conversion       0b = ADC14 disabled
-    // 0     ADC14SC    ADC14 start             0b = No start (yet)
-
-    ADC14->CTL1 = 0x00000030;          // 5) ADC14MEM0, 14-bit, ref on, regular power
-    // 20-16 STARTADDx  start addr          00000b = ADC14MEM0
-    // 15-6  reserved                  0000000000b (reserved)
-    // 5-4   ADC14RES   ADC14 resolution       11b = 14 bit, 16 clocks
-    // 3     ADC14DF    data read-back format   0b = Binary unsigned
-    // 2     REFBURST   reference buffer burst  0b = reference on continuously
-    // 1-0   ADC14PWRMD ADC power modes        00b = Regular power mode
-
-    ADC14->MCTL[0] = 0x00000000;         // 6) 0 to 3.3V, channel 0
-    // 15   ADC14WINCTH Window comp threshold   0b = not used
-    // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
-    // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
-    // 12   reserved                            0b (reserved)
-    // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
-    // 7    ADC14EOS    End of sequence         0b = End of sequence
-    // 6-5  reserved                           00b (reserved)
-    // 4-0  ADC14INCHx  Input channel        0000b = A0, P5.5
-
-    ADC14->MCTL[1] = 0x00000081;         // 6) 0 to 3.3V, channel 1
-    // 15   ADC14WINCTH Window comp threshold   0b = not used
-    // 14   ADC14WINC   Comparator enable       0b = Comparator disabled
-    // 13   ADC14DIF    Differential mode       0b = Single-ended mode enabled
-    // 12   reserved                            0b (reserved)
-    // 11-8 ADC14VRSEL  V(R+) and V(R-)      0000b = V(R+) = AVCC, V(R-) = AVSS
-    // 7    ADC14EOS    End of sequence         1b = End of sequence
-    // 6-5  reserved                           00b (reserved)
-    // 4-0  ADC14INCHx  Input channel        0001b = A1, P5.4
-
-
-
-    ADC14->IER0 = 0; // 7) no interrupts
-    ADC14->IER1 = 0; // no interrupts
-    P5->SEL0 |= 0x38;
-    P5->SEL1 |= 0x38;
-
-    ADC14->CTL0 |= 0x00000002;         // 9) enable
-}
-
 void main(){
-    uint32_t a, b, c;
+    struct FSM_State_s current_state = FSM_States[2];
+    uint32_t next_state_index, transition;
+
     Clock_Init48MHz(); // makes it 48 MHz
     SysTick_Init();
     LaunchPad_Init();   // buttons and LEDs
 
+    // Set up PWM outputs for the motors
     Motor_Init();
 
+    // Initialize our ADCs
     ADC0_InitSWTriggerCh67();
 
     // The period is in units of 2 us, 38ms = 19000 counts
     TimerA2_Init(timerA2_task, 19000);
 
-    // Start moving forward
-    struct FSM_State_s current_state = FSM_States[2], next_state;
-    uint32_t next_state_index;
+    seven_segment_setup();
+
+    set_segment_value(0, 1);
+    set_segment_value(1, 2);
+    set_segment_value(2, 3);
+    set_segment_value(3, 4);
 
     while (1){
-        uint32_t transition = distance_to_obj(right_distance, center_distance, left_distance);
+        // Figure out object position based on distances
+        transition = distance_to_obj(right_distance, center_distance, left_distance);
+        // Figure out the next state based on this states transition table
         next_state_index = current_state.next_state_index[transition];
-
+        // Update the current state
         current_state = FSM_States[next_state_index];
+        // Update LED output
         LaunchPad_Output(current_state.color);
-        Drive_Motors(current_state.left_speed, current_state.left_dir,
-                     current_state.right_speed, current_state.right_dir);
-
+        // Update motor speed and direction
+        //Drive_Motors(current_state.left_speed, current_state.left_dir,
+          //           current_state.right_speed, current_state.right_dir);
     }
 }

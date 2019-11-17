@@ -48,7 +48,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 // UCA0TXD (VCP transmit) connected to P1.3
 #include <stdint.h>
 #include "../inc/FIFO0.h"
-#include "../inc/EUSCIA0.h"
+#include "EUSCIA0.h"
 #include "msp.h"
 
 

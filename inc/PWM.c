@@ -49,9 +49,9 @@ policies, either expressed or implied, of the FreeBSD Project.
 */
 
 #include "msp.h"
-#include "../inc/TimerUtil.h"
-#include "../inc/PinManip.h"
-#include "../inc/PinMap.h"
+#include "TimerUtil.h"
+#include "PinManip.h"
+#include "PinMap.h"
 
 //***************************PWM_Init1*******************************
 // PWM outputs on P2.4

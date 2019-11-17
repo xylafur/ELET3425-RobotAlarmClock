@@ -44,7 +44,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 */
 
 #include <stdint.h>
-#include "../inc/FIFO0.h"
+#include "FIFO0.h"
 
 // Implementation of the transmit FIFO, TxFifo0
 // can hold 0 to TXFIFOSIZE-1 elements

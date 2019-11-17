@@ -18,9 +18,13 @@ ORDERED_OBJS += \
 "./Motor.obj" \
 "./MotorSimple.obj" \
 "./PWM.obj" \
+"./SevenSegment.obj" \
 "./SysTick.obj" \
+"./TimerA0.obj" \
+"./TimerA1.obj" \
 "./TimerA2.obj" \
 "./UART0.obj" \
+"./fsm.obj" \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
 "../msp432p401r.cmd" \
@@ -166,8 +170,8 @@ Lab12_Motors.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADC14.obj" "Bump.obj" "Clock.obj" "EUSCIA0.obj" "FIFO0.obj" "Lab12_Motorsmain.obj" "LaunchPad.obj" "Motor.obj" "MotorSimple.obj" "PWM.obj" "SysTick.obj" "TimerA2.obj" "UART0.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "ADC14.d" "Bump.d" "Clock.d" "EUSCIA0.d" "FIFO0.d" "Lab12_Motorsmain.d" "LaunchPad.d" "Motor.d" "MotorSimple.d" "PWM.d" "SysTick.d" "TimerA2.d" "UART0.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "ADC14.obj" "Bump.obj" "Clock.obj" "EUSCIA0.obj" "FIFO0.obj" "Lab12_Motorsmain.obj" "LaunchPad.obj" "Motor.obj" "MotorSimple.obj" "PWM.obj" "SevenSegment.obj" "SysTick.obj" "TimerA0.obj" "TimerA1.obj" "TimerA2.obj" "UART0.obj" "fsm.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "ADC14.d" "Bump.d" "Clock.d" "EUSCIA0.d" "FIFO0.d" "Lab12_Motorsmain.d" "LaunchPad.d" "Motor.d" "MotorSimple.d" "PWM.d" "SevenSegment.d" "SysTick.d" "TimerA0.d" "TimerA1.d" "TimerA2.d" "UART0.d" "fsm.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

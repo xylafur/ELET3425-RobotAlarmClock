@@ -49,7 +49,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 
 #include <stdint.h>
 #include <stdio.h>
-#include "../inc/UART0.h"
+#include "UART0.h"
 #include "msp.h"
 
 //------------UART0_Init------------

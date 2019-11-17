@@ -87,6 +87,8 @@ void TimerA0_Init(void(*task)(void), uint16_t period){
 }
 
 
+
+
 // ------------TimerA0_Stop------------
 // Deactivate the interrupt running a user task periodically.
 // Input: none

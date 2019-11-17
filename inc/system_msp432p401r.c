@@ -2,15 +2,15 @@
 * @file     system_msp432p401r.c
 * @brief    CMSIS Cortex-M4F Device Peripheral Access Layer Source File for
 *           MSP432P401R
-* @version  2.210
-* @date     2016-08-16
+* @version  3.202
+* @date     08/03/17
 *
 * @note     View configuration instructions embedded in comments
 *
 ******************************************************************************/
 //*****************************************************************************
 //
-// Copyright (C) 2015 - 2016 Texas Instruments Incorporated - http://www.ti.com/
+// Copyright (C) 2015 - 2017 Texas Instruments Incorporated - http://www.ti.com/
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions

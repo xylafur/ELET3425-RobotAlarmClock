@@ -17,9 +17,13 @@ C_SRCS += \
 ../Motor.c \
 /home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/MotorSimple.c \
 ../PWM.c \
+../SevenSegment.c \
 /home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/SysTick.c \
+../TimerA0.c \
+../TimerA1.c \
 ../TimerA2.c \
 ../UART0.c \
+../fsm.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -34,9 +38,13 @@ C_DEPS += \
 ./Motor.d \
 ./MotorSimple.d \
 ./PWM.d \
+./SevenSegment.d \
 ./SysTick.d \
+./TimerA0.d \
+./TimerA1.d \
 ./TimerA2.d \
 ./UART0.d \
+./fsm.d \
 ./startup_msp432p401r_ccs.d \
 ./system_msp432p401r.d 
 
@@ -51,9 +59,13 @@ OBJS += \
 ./Motor.obj \
 ./MotorSimple.obj \
 ./PWM.obj \
+./SevenSegment.obj \
 ./SysTick.obj \
+./TimerA0.obj \
+./TimerA1.obj \
 ./TimerA2.obj \
 ./UART0.obj \
+./fsm.obj \
 ./startup_msp432p401r_ccs.obj \
 ./system_msp432p401r.obj 
 
@@ -68,9 +80,13 @@ OBJS__QUOTED += \
 "Motor.obj" \
 "MotorSimple.obj" \
 "PWM.obj" \
+"SevenSegment.obj" \
 "SysTick.obj" \
+"TimerA0.obj" \
+"TimerA1.obj" \
 "TimerA2.obj" \
 "UART0.obj" \
+"fsm.obj" \
 "startup_msp432p401r_ccs.obj" \
 "system_msp432p401r.obj" 
 
@@ -85,9 +101,13 @@ C_DEPS__QUOTED += \
 "Motor.d" \
 "MotorSimple.d" \
 "PWM.d" \
+"SevenSegment.d" \
 "SysTick.d" \
+"TimerA0.d" \
+"TimerA1.d" \
 "TimerA2.d" \
 "UART0.d" \
+"fsm.d" \
 "startup_msp432p401r_ccs.d" \
 "system_msp432p401r.d" 
 
@@ -102,9 +122,13 @@ C_SRCS__QUOTED += \
 "../Motor.c" \
 "/home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/MotorSimple.c" \
 "../PWM.c" \
+"../SevenSegment.c" \
 "/home/yelsek/projects/tirslk_maze_1_00_01/tirslk_maze_1_00_00/inc/SysTick.c" \
+"../TimerA0.c" \
+"../TimerA1.c" \
 "../TimerA2.c" \
 "../UART0.c" \
+"../fsm.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 
